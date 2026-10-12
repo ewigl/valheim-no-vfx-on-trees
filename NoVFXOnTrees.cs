@@ -34,17 +34,18 @@ namespace NoVFXOnTrees
                 true,
                 "Remove smoke effects when trees are destroyed.");
 
+            _disableHitSawdust = Config.Bind(
+                "Hit",
+                "DisableSawdust",
+                true,
+                "Remove sawdust effects when trees are hit. (Will also remove smoke effects cause it's part of the same VFX.)");
+
             _disableHitSmoke = Config.Bind(
                 "Hit",
                 "DisableSmoke",
                 true,
                 "Remove smoke effects when trees are hit.");
 
-            _disableHitSawdust = Config.Bind(
-                "Hit",
-                "DisableSawdust",
-                false,
-                "Remove sawdust effects when trees are hit. (Will also remove smoke effects cause it's part of the same VFX.)");
 
             _disableDestructionSmoke.SettingChanged += OnConfigChanged;
             _disableHitSawdust.SettingChanged += OnConfigChanged;
