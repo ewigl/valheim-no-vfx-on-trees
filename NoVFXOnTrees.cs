@@ -13,7 +13,7 @@ namespace NoVFXOnTrees
     {
         public const string PluginGUID = "ewigl.NoVFXOnTrees";
         public const string PluginName = "No VFX On Trees";
-        public const string PluginVersion = "0.1.0";
+        public const string PluginVersion = "0.9.2";
 
         private readonly Harmony _harmony = new("ewigl.NoVFXOnTrees");
 
@@ -62,17 +62,15 @@ namespace NoVFXOnTrees
         {
             if (effects == null) return;
             _trackedDestroyedEffectLists.Add(effects);
-            ApplyTrackedEffects();
         }
 
         internal static void TrackHitEffects(EffectList.EffectData[] effects)
         {
             if (effects == null) return;
             _trackedHitEffectLists.Add(effects);
-            ApplyTrackedEffects();
         }
 
-        private static void ApplyTrackedEffects()
+        internal static void ApplyTrackedEffects()
         {
             var nodesToDisable = new HashSet<GameObject>();
 
@@ -105,7 +103,7 @@ namespace NoVFXOnTrees
 
                     foreach (Transform child in effect.m_prefab.transform)
                     {
-                        if (child.name.ToLower().Contains("smokepoff"))
+                        if (child.name.IndexOf("smokepoff", StringComparison.Ordinal) >= 0)
                         {
                             RecordAndCollectNode(child.gameObject, nodesToDisable);
                         }
@@ -126,9 +124,8 @@ namespace NoVFXOnTrees
                 {
                     if (effect?.m_prefab == null) continue;
 
-                    string prefabNameLower = effect.m_prefab.name.ToLower();
-
-                    if (disableSawdust && prefabNameLower.Contains("sawdust"))
+                    if (disableSawdust &&
+                        effect.m_prefab.name.IndexOf("SawDust", StringComparison.Ordinal) >= 0)
                     {
                         RecordAndCollectNode(effect.m_prefab, nodesToDisable);
                         continue;
@@ -136,14 +133,14 @@ namespace NoVFXOnTrees
 
                     foreach (Transform child in effect.m_prefab.transform)
                     {
-                        string childNameLower = child.name.ToLower();
-
-                        if (disableSawdust && childNameLower.Contains("sawdust"))
+                        if (disableSawdust &&
+                            child.name.IndexOf("SawDust", StringComparison.Ordinal) >= 0)
                         {
                             RecordAndCollectNode(child.gameObject, nodesToDisable);
                         }
 
-                        if (disableSmoke && childNameLower.Contains("smokepoff"))
+                        if (disableSmoke &&
+                            child.name.IndexOf("smokepoff", StringComparison.Ordinal) >= 0)
                         {
                             RecordAndCollectNode(child.gameObject, nodesToDisable);
                         }
@@ -185,6 +182,8 @@ namespace NoVFXOnTrees
                     NoVFXOnTrees.TrackHitEffects(destructible.m_hitEffect.m_effectPrefabs);
                 }
             }
+
+            NoVFXOnTrees.ApplyTrackedEffects();
         }
     }
 }
